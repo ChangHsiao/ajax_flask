@@ -18,9 +18,29 @@
     {% include '_navbar.html' %}
     <div class="container mt-3">
         <h3>JSON 練習</h3>
-        <div id="userList">
+        <table id="userList" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>姓名</th>
+                    <th>電子郵件</th>
+                    <th>年紀</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
 
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                    card’s content.</p>
+            </div>
         </div>
+
+        <ul id="ul1">
+        </ul>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
@@ -32,9 +52,65 @@
                 { "id": 2, "UserName": "Bob", "UserEmail": "bob@company.com", "age": 34 },
                 { "id": 3, "UserName": "Charlie", "UserEmail": "charlie@company.com", "age": 22 }]
 
-            //如何讀取 users JSON 中的資料
-            //如何將讀出的資料顯示在網頁上
+            // console.log(spots);
 
+            // const data = {"users":users};
+            // console.log(data.users[1].age); // 34
+
+            // const datas = [0:value,1:value,2:value]陣列
+            // datas[0]
+
+            // users => [] => array
+            // console.log(users[0])
+
+            // // const obj = {"key1":value1,"key2":value2}物件
+            // // obj.key1 => value1
+            // // obj["key2"] => value2
+
+            // console.log(users[0].UserName); //Alice
+            // console.log(users[0]["age"]); //28
+
+            // {"key":value,"key":value}物件
+
+            //如何讀取 users JSON 中的資料
+            // console.log(user.length);
+
+            //array 物件提供的方法 forEach
+            const theul = document.querySelector('#ul1');
+            const tb = document.querySelector("#userList>tbody")
+            let lis = '';
+            let tds = '';
+            // <tr>
+            //         <td>Bob</td>
+            //         <td>Bob@company.com</td>
+            //         <td>30</td>
+            //     </tr>
+
+            users.forEach((user, index, array) => {
+                // console.log(array);
+                // console.log(index);
+                // console.log(user);
+                // console.log(user.id);
+                // console.log(user.UserName);
+                // console.log(user.UserEmail);
+                // console.log(user.age);
+                lis += `<li>${user.UserName}</li>`;
+
+                // 解構賦值
+                const { id, UserName, UserEmailm, age } = user;
+
+                tds += `
+                <tr>
+                    <td>${id}</td>
+                    <td>${UserName}</td>
+                    <td>${UserEmailm}</td>
+                    <td>${age}</td>
+                </tr>`;
+            })
+
+            //如何將讀出的資料顯示在網頁上
+            theul.innerHTML = lis;
+            tb.innerHTML = tds;
 
 
         </script>
