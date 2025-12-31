@@ -21,11 +21,11 @@
         <div class="container mt-5">
             <!-- <div class="row justify-content-center"> -->
             <button id="buttonStart" class="btn btn-primary">Ajax 開始</button>
-            <button id="buttonStart" class="btn btn-primary">Ajax 結束</button>
+            <button id="buttonEnd" class="btn btn-primary">Ajax 結束</button>
             <img id="img1" src="static/images/Loading.gif" style="display: none;" alt="載入中..." />
 
 
-            <div id="divInfo" class="alert mt-5"></div>
+            <div id="divInfo" class="alert alert-info mt-5"></div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -34,7 +34,125 @@
         const divInfo = document.querySelector('#divInfo');
         const imgLoader = document.querySelector('#img1');
         const btnStart = document.querySelector('#buttonStart');
+        const btnEnd = document.querySelector('#buttonEnd');
 
+        // function hi(){
+        //
+        // }
+
+        // ()=>{} 箭頭函示
+        // a => {
+
+        // } 一個參數，可以省略()
+
+        // a => console.log(a) 若只有一行程式碼，可以省略{}
+
+        let abortControllar = null;
+
+        btnStart.addEventListener('click', async () => {
+            const apiUrl = "http://127.0.0.1:5000/api/hello";
+            abortControllar = new AbortController();
+            const signal = abortControllar.signal;
+
+            // 3 秒內沒有回傳結果就終止 fetch 的執行
+            const timer = setTimeout(() => {
+                abortControllar.abort('api 的執行逾期');
+            }, 10000)
+
+            try {
+                imgLoader.style.display = 'inline'  // 顯示執行中的圖示
+                btnStart.disabled = true;  // 停用按鈕
+
+                const response = await fetch(apiUrl, { "signal": signal }); // key 和 變數名稱一樣時，可以省略 key
+                if (!response.ok) throw new Error('有錯誤，無法取得資料');
+
+                const data = await response.json();
+                divInfo.innerHTML = `<h2>${data.message}</h2>`;
+
+            } catch (error) {
+                // console.log(error);
+                if (signal.aborted) { //true 表示取消了
+                    divInfo.textContent = error;
+                } else {
+                    divInfo.textContent = error.message;
+                }
+            } finally {
+                imgLoader.style.display = 'none'  // 顯示執行中的圖示
+                btnStart.disabled = false;  // 停用按鈕
+                clearTimeout(timer)  // 清除計時功能
+            }
+
+            // btnStart.addEventListener('click', async () => {
+            //     const apiUrl = "http://127.0.0.1:5000/api/hello1";
+
+            //     try {
+            //         // 有可能發生錯誤
+            //         //async await
+            //         const response = await fetch(apiUrl);
+
+            //         // 先確認 ok 為 true
+            //         if (!response.ok) throw new Error('有錯誤，無法取得資料'); // new 來產生新物件
+            //         const data = await response.json();
+            //         divInfo.innerHTML = `<h2>${data.message}</h2>`;
+
+            //         // // 先確認 ok 為 true
+            //         // if (response.ok) {
+            //         //     // 再確認格是正確
+            //         //     const contentType = response.headers.get('content-type');
+            //         //     if (contentType && contentType.includes('application/json')) {
+            //         //         const data = await response.json();
+            //         //         divInfo.innerHTML = `<h2>${data.message}</h2>`;
+            //         //     } else {
+            //         //         console.log('回傳資料格式不正確')
+            //         //     }
+
+            //         // } else {
+            //         //     if (response.status >= 500) {
+            //         //         console.log('伺服器發生錯誤')
+            //         //     } else if (response.status >= 400) {
+            //         //         console.log('呼叫錯誤')
+            //         //     } else {
+            //         //         console.log('請聯絡客服')
+            //         //     }
+            //         //     console.log('status:', response.status);
+            //         // }
+
+            //     } catch (error) {
+            //         divInfo.textContent = error.message;
+            //     } finally {
+            //         console.log('請求結束')
+            //     }
+
+            // primise
+            // fetch(apiUrl)
+            //     .then(response => response.json())  // 只有一行程式碼，省略 return
+            //     .then(data => {
+            //         // divInfo.textContent = JSON.stringify(data);  // json 物件轉成 json 字串 
+            //         divInfo.textContent = data.message;
+            //     })
+            // console.log(fetch(apiUrl));
+            // fetch(apiUrl)
+            //     .then(res => {
+            //         // console.log(res);
+            //         // console.log(res.headers.get('Content-Type'));
+            //         // console.log(res.headers.get('Content-Length'));
+            //         // console.log(res.ok);
+            //         // console.log(res.status);
+            //         // console.log(res.body);
+            //         // console.log(res.json());  // 讀去 body 中 json 格式的資料，回傳的又是一個 promise object
+            //         return res.json();
+            //     })
+            //     .then(data => {
+            //         console.log(data);
+            //     })
+        })
+
+        btnEnd.addEventListener('click', () => {
+            if (abortControllar) {
+                abortControllar.abort('您停止了程式執行');
+            }
+
+        })
     </script>
 </body>
 
